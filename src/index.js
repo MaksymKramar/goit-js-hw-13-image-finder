@@ -1,4 +1,5 @@
 import * as basicLightbox from 'basiclightbox';
+import 'basiclightbox/src/styles/main.scss';
 import debounce from 'lodash.debounce';
 import { alert, notice, info, success, error } from '@pnotify/core';
 import { defaults } from '@pnotify/core';
@@ -20,16 +21,15 @@ const refs = {
     inputSearch: document.querySelector("#search-form input"),
     galleryLists: document.querySelector('.gallery'),
     loadMoreBtn: document.querySelector('[data-action="load-more"]'),
-
-
+    sentinel: document.querySelector('#sentinel'),
 };
 
 const newsApiService = new NewsApiService();
 // console.log(refs.loadMoreBtn);
 
 refs.inputSearch.addEventListener('input', debounce(onSearch, 500));
-refs.loadMoreBtn.addEventListener('click', loadMoreArticles);
-// refs.galleryLists.addEventListener('click', modalImage);
+// refs.loadMoreBtn.addEventListener('click', loadMoreArticles);
+refs.galleryLists.addEventListener('click', modalImage);
 
 function onSearch(e) {
      e.preventDefault();
@@ -44,7 +44,7 @@ function onSearch(e) {
     newsApiService.resetPage();
     clearArticlesContainer();
     fetchArticles();
-    refs.loadMoreBtn.classList.remove('is-hidden')
+    // refs.loadMoreBtn.classList.remove('is-hidden')
     
     // console.log(API.fetchImages({inputValue,pageNumber, API_KEY}));
     // return API.fetchImages({inputValue,pageNumber, API_KEY}).then(renderImagesCard)//.catch(onFetchError);
@@ -69,44 +69,65 @@ function renderImagesCard(articles) {
     refs.galleryLists.insertAdjacentHTML('beforeend', markup);
 };
 
-function scrollImages() {
-    
-//    setTimeout(() => {
-//         window.scrollTo(0,document.querySelector(".photo-card").scrollHeight);
-//    }, 1000);
 
- const element = document.querySelector('.gallery');
-    setTimeout(() => {
-        window.scrollTo({
-         top: element.clientHeight,
-         behavior: 'smooth',
-       });
-    }, 500);
-
-    // const element = document.querySelector('.card__item');
-    // setTimeout(() => {
-    //         element.scrollIntoView({
-    //     behavior: 'smooth',
-    //     block: 'end',
-    // });
-    // }, 1000);
-
-};
 function clearArticlesContainer() {
   refs.galleryLists.innerHTML = '';
 }
 
-// function modalImage() {
-//     newsApiService.fetchImages().then(articles => { modalImageTpl(articles) });
-//     const markup = modalImageTpl(articles.hits);
-//     console.log(markup);
-// //     const instance = basicLightbox.create(`
-// //     <img ${markup}>
-// // `);
+function modalImage(e) {
+    
+    if (e.target.nodeName === 'IMG') {
+        console.log('lsfs')
+        const instance = basicLightbox.create(`
+        <img src="${e.target.dataset.largeImage}" >
+    `)
+        instance.show()
 
-// // instance.show()
-//     // const instance = basicLightbox.create(`${markup}`);
-//     // console.log(instance)
-// // instance.show()
+    }
+}
 
-// }
+const onEntry = entries => {
+  entries.forEach(entry => {
+      if (entry.isIntersecting && newsApiService.query !== '') {
+        fetchArticles()
+      }
+  });
+};
+
+
+const observer = new IntersectionObserver(onEntry, {
+  rootMargin: '150px',
+});
+
+observer.observe(refs.sentinel);
+
+// function scrollImages() {
+    
+    
+//    setTimeout(() => {
+//         const element = document.querySelector('.gallery li');
+// element.scrollIntoView({
+//   behavior: 'smooth',
+//     block: 'nearest ',
+// });
+//    }, 1000);
+
+
+//     // setTimeout(() => {
+//     //         const element = document.querySelector('.gallery li:last-child');
+
+//     //          window.scrollTo({
+//     //      top: element.offsetTop,
+//     //      behavior: 'smooth',
+//     //    });
+//     // }, 1000);
+
+//     // const element = document.querySelector('.card__item');
+//     // setTimeout(() => {
+//     //         element.scrollIntoView({
+//     //     behavior: 'smooth',
+//     //     block: 'end',
+//     // });
+//     // }, 1000);
+
+// };
