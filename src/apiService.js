@@ -9,22 +9,26 @@ export default class NewsApiService {
     };
 
     fetchImages() {
-        const url = `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.inputValue}&page=${this.pageNumber}&per_page=12&key=${API_KEY}`
+        const url = `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.inputValue}&page=${this.pageNumber}&per_page=12&key=${API_KEY}`;
 
-        return fetch(url).then(response => response.json()).then(this.incrementPage())
-    }
+        return fetch(url).then(response => response.json()).then(this.incrementPage());
+    };
 
     incrementPage() {
         this.pageNumber += 1;
-    }
+    };
+
+    resetPage() {
+    this.pageNumber = 1;
+  }
 
     get query() {
-    return this.searchQuery;
-  }
+        return this.inputValue;
+    };
 
-    set query(newQuery) {
-    this.searchQuery = newQuery;
-  }
+    set query(newValue) {
+        this.inputValue = newValue;
+    };
  };
 
 
