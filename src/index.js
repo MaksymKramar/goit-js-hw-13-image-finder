@@ -18,7 +18,7 @@ import modalImageTpl from './templates/modal-image.hbs';
 
 
 const refs = {
-    inputSearch: document.querySelector("#search-form input"),
+    inputSearch: document.querySelector("#search-form"),
     galleryLists: document.querySelector('.gallery'),
     loadMoreBtn: document.querySelector('[data-action="load-more"]'),
     sentinel: document.querySelector('#sentinel'),
@@ -27,14 +27,13 @@ const refs = {
 const newsApiService = new NewsApiService();
 // console.log(refs.loadMoreBtn);
 
-refs.inputSearch.addEventListener('input', debounce(onSearch, 500));
+refs.inputSearch.addEventListener('submit', onSearch);
 // refs.loadMoreBtn.addEventListener('click', loadMoreArticles);
 refs.galleryLists.addEventListener('click', modalImage);
 
 function onSearch(e) {
      e.preventDefault();
-
-    newsApiService.query = refs.inputSearch.value;
+    newsApiService.query = e.currentTarget.elements.query.value;
 
     if (newsApiService.query.trim() === '') {
         error('Пустая строка, введите что-то в поиск');
